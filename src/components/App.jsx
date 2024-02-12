@@ -68,19 +68,17 @@ class App extends Component {
     }));
   };
   handleSubmit = data => {
-    const { value } = data;
-
-    if (value.trim() === '') {
+    if (data === '') {
       toast('Please enter a search query');
       this.setState({
         arrayPictures: [],
-        totalPage:0,
+        totalPage: 0,
       });
       return;
     }
 
     this.setState({
-      query: `${Date.now()}/${value}`,
+      query: `${Date.now()}/${data}`,
       arrayPictures: [],
       currentPage: 1,
     });
