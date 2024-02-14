@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import style from './App.module.css';
 
@@ -18,16 +18,28 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
+
+  const controllerRef = useRef();
+
   useEffect(() => {
     if (query === '') {
       return;
     }
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+    controllerRef.current = new AbortController();
     async function fethQuery() {
+
       try {
         setIsLoading(true);
         setError(null);
         const queryPure = queryNormalaize(query);
-        const arrayImages = await API.fetchPhoto(`${queryPure}`, currentPage);
+        const arrayImages = await API.fetchPhoto(
+          `${queryPure}`,
+          currentPage,
+          controllerRef.current
+        );
         const { arrayPictures, totalPage } = imagesArreyNormalaize(arrayImages);
 
         if (arrayPictures.length === 0) {
@@ -43,13 +55,19 @@ const App = () => {
         setArrayPictures(prevArray => [...prevArray, ...arrayPictures]);
         setTotalPage(totalPage);
       } catch (error) {
-        toast.error('This is an error!');
-        setError(error);
+        if (error.name !== 'CanceledError') {
+          toast.error('This is an error!');
+          setError(error);
+        }
+        console.log('so many reqvest, wait wait:', error);
       } finally {
         setIsLoading(false);
       }
     }
     fethQuery();
+    return () => {
+      controllerRef.current.abort();
+    }
   }, [query, currentPage]);
 
   //  componentDidUpdate(_, prevState) {
@@ -96,10 +114,6 @@ const App = () => {
   //   }
   // };
 
-  const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
-  };
-
   const handleSubmit = data => {
     if (data === '') {
       toast('Please enter a search query');
@@ -112,6 +126,10 @@ const App = () => {
     setQuery(`${Date.now()}/${data}`);
   };
 
+  // const handleLoadMore = () => {
+  //   setCurrentPage(prev => prev + 1);
+  // };
+
   const isLoadMore = currentPage < totalPage && !isLoading && !error;
   return (
     <div className={style.App}>
@@ -121,7 +139,7 @@ const App = () => {
       )}
       <Toaster />
       {isLoading && <Loader />}
-      {isLoadMore && <Button onLoadMore={handleLoadMore} />}
+      {isLoadMore && <Button onLoadMore={()=>setCurrentPage(prev => prev + 1)} />}
     </div>
   );
 };
