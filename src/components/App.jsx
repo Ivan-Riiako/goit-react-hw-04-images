@@ -70,49 +70,6 @@ const App = () => {
     }
   }, [query, currentPage]);
 
-  //  componentDidUpdate(_, prevState) {
-
-  //   const { currentPage, query } = this.state;
-
-  //   if (prevState.query !== query || prevState.currentPage !== currentPage) {
-  //     try {
-  //       this.setState({
-  //         isLoading: true,
-  //       });
-  //       const queryPure = queryNormalaize(query);
-  //       const arrayImages = await API.fetchPhoto(`${queryPure}`, currentPage);
-  //       const { arrayPictures, totalPage } = imagesArreyNormalaize(arrayImages);
-
-  //       if (arrayPictures.length === 0) {
-
-  //         toast('no images found, try again!', {
-  //           style: {
-  //             backgroundColor: 'rgba(209, 191, 53, 0.2',
-  //           },
-  //         });
-  //         this.setState({
-  //           error:true,
-  //         });
-  //         return;
-  //       }
-
-  //       this.setState(prevState => ({
-  //         arrayPictures: [...prevState.arrayPictures, ...arrayPictures],
-  //         totalPage,
-  //         error:null
-  //       }));
-  //     } catch (error) {
-  //       this.setState({
-  //         error
-  //       });
-  //       toast.error('This is an error!');
-  //     } finally {
-  //       this.setState({
-  //         isLoading: false,
-  //       });
-  //     }
-  //   }
-  // };
 
   const handleSubmit = data => {
     if (data === '') {
@@ -125,10 +82,6 @@ const App = () => {
     setArrayPictures([]);
     setQuery(`${Date.now()}/${data}`);
   };
-
-  // const handleLoadMore = () => {
-  //   setCurrentPage(prev => prev + 1);
-  // };
 
   const isLoadMore = currentPage < totalPage && !isLoading && !error;
   return (
