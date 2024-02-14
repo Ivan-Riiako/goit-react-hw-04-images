@@ -14,16 +14,14 @@ const instance = axios.create({
 });
 // Запрос на сервер
  
-async function fetchPhoto(value = '', page = 1, abortController = null) {
-  return await instance(
-    {
-      params: {
-        q: `${value}`,
-        page: `${page}`,
-      },
-      signal: abortController ? abortController.signal : null,
-    }
-  );
+async function fetchPhoto(value = '', page = 1, { signal = null }) {
+  return await instance({
+    params: {
+      q: `${value}`,
+      page: `${page}`,
+    },
+    signal ,
+  });
 };
 
 const API = { fetchPhoto };
