@@ -30,7 +30,6 @@ const App = () => {
     }
     controllerRef.current = new AbortController();
     async function fethQuery() {
-
       try {
         setIsLoading(true);
         setError(null);
@@ -51,7 +50,6 @@ const App = () => {
           setError(true);
           return;
         }
-
         setArrayPictures(prevArray => [...prevArray, ...arrayPictures]);
         setTotalPage(totalPage);
       } catch (error) {
@@ -67,9 +65,8 @@ const App = () => {
     fethQuery();
     return () => {
       controllerRef.current.abort();
-    }
-  }, [query, currentPage]);
-
+    };
+  }, [currentPage, query]);
 
   const handleSubmit = data => {
     if (data === '') {
@@ -92,7 +89,9 @@ const App = () => {
       )}
       <Toaster />
       {isLoading && <Loader />}
-      {isLoadMore && <Button onLoadMore={()=>setCurrentPage(prev => prev + 1)} />}
+      {isLoadMore && (
+        <Button onLoadMore={() => setCurrentPage(prev => prev + 1)} />
+      )}
     </div>
   );
 };
